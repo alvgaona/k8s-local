@@ -1,13 +1,11 @@
-FROM rust:1.70 as builder
+FROM rust:1.70 AS builder
 
 # Set the working directory in the container
 WORKDIR /usr/src/app
 
-COPY Cargo.toml Cargo.lock ./
+COPY . .
 
-COPY src ./src
-
-RUN cargo build --release
+RUN cargo build --release --package spring-rs-hello
 
 # Use a smaller base image for the final container
 FROM debian:bullseye-slim

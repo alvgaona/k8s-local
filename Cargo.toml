@@ -1,2 +1,3 @@
 [workspace]
 members = ["apps/spring-rs-hello"]
+resolver = "2"

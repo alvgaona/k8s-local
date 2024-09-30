@@ -4,7 +4,6 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-anyhow = "1.0.89"
 spring = "0.2.0"
 spring-web = "0.2.0"
 tokio = "1.40.0"
