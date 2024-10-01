@@ -1,0 +1,79 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: spring-rs-hello
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: spring-rs-hello
+  labels:
+    app: spring-rs-hello
+    service: spring-rs-hello
+spec:
+  ports:
+  - name: http
+    port: 8080
+    targetPort: 8080
+  selector:
+    app: spring-rs-hello
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spring-rs-hello
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: spring-rs-hello
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: spring-rs-hello
+        version: v1
+    spec:
+      serviceAccountName: spring-rs-hello
+      containers:
+      - image: ghcr.io/alvgaona/spring-rs-hello:latest
+        imagePullPolicy: Always
+        name: spring-rs-hello
+        ports:
+        - containerPort: 8080
+---
+apiVersion: networking.istio.io/v1
+kind: Gateway
+metadata:
+    name: spring-rs-hello-gateway
+spec:
+    selector:
+      istio: ingress
+    servers:
+    - port:
+        number: 80
+        name: http
+        protocol: HTTP
+      hosts:
+      - "spring-rs-hello.example.com"
+---
+apiVersion: networking.istio.io/v1
+kind: VirtualService
+metadata:
+  name: spring-rs-hello
+spec:
+  hosts:
+  - "spring-rs-hello.example.com"
+  gateways:
+  - spring-rs-hello-gateway
+  http:
+  - match:
+    - uri:
+        exact: /
+    - uri:
+        prefix: /hello
+    route:
+    - destination:
+        port:
+          number: 8080
+        host: spring-rs-hello
