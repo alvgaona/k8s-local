@@ -17,3 +17,8 @@ async fn root() -> impl IntoResponse {
 async fn hello(Path(name): Path<String>) -> impl IntoResponse {
     format!("hello {name}")
 }
+
+#[get("/health")]
+async fn health() -> impl IntoResponse {
+    "OK"
+}
